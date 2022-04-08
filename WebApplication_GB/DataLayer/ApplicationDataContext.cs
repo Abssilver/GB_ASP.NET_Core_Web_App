@@ -9,6 +9,6 @@ namespace DataLayer
             
         }
 
-        public DbSet<Contract> Contracts { get; set; }
+        public DbSet<ContractDto> Contracts { get; set; }
     }
 }

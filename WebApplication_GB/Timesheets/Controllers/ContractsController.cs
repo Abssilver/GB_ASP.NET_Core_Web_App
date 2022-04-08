@@ -13,7 +13,7 @@ namespace Timesheets.Controllers
         public ContractsController(ILogger<ContractsController> logger)
         {
             _logger = logger;
-            _logger.LogDebug(1, $"NLog встроен в {this.GetType()}");
+            _logger.LogDebug(1, $"Loggger встроен в {this.GetType()}");
         }
         
         //http://localhost:51685/api/сontracts/register
