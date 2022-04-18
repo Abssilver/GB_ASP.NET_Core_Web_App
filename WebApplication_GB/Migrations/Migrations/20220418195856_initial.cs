@@ -8,14 +8,27 @@ namespace Migrations.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "ClientDto",
+                name: "Client",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ClientDto", x => x.Id);
+                    table.PrimaryKey("PK_Client", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Persons",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Persons", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -32,29 +45,29 @@ namespace Migrations.Migrations
                 {
                     table.PrimaryKey("PK_Contracts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Contracts_ClientDto_OwnerId",
+                        name: "FK_Contracts_Client_OwnerId",
                         column: x => x.OwnerId,
-                        principalTable: "ClientDto",
+                        principalTable: "Client",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "TaskDto",
+                name: "ContractTask",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: true),
                     Time = table.Column<long>(type: "bigint", nullable: false),
-                    ContractDtoId = table.Column<int>(type: "integer", nullable: true)
+                    ContractId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TaskDto", x => x.Id);
+                    table.PrimaryKey("PK_ContractTask", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TaskDto_Contracts_ContractDtoId",
-                        column: x => x.ContractDtoId,
+                        name: "FK_ContractTask_Contracts_ContractId",
+                        column: x => x.ContractId,
                         principalTable: "Contracts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -66,21 +79,24 @@ namespace Migrations.Migrations
                 column: "OwnerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaskDto_ContractDtoId",
-                table: "TaskDto",
-                column: "ContractDtoId");
+                name: "IX_ContractTask_ContractId",
+                table: "ContractTask",
+                column: "ContractId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "TaskDto");
+                name: "ContractTask");
+
+            migrationBuilder.DropTable(
+                name: "Persons");
 
             migrationBuilder.DropTable(
                 name: "Contracts");
 
             migrationBuilder.DropTable(
-                name: "ClientDto");
+                name: "Client");
         }
     }
 }

@@ -3,15 +3,17 @@ using System;
 using DataLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Migrations.Migrations
 {
     [DbContext(typeof(ApplicationDataContext))]
-    partial class ApplicationDataContextModelSnapshot : ModelSnapshot
+    [Migration("20220418195856_initial")]
+    partial class initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -19,17 +21,32 @@ namespace Migrations.Migrations
                 .HasAnnotation("ProductVersion", "5.0.15")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            modelBuilder.Entity("DataLayer.ClientDto", b =>
+            modelBuilder.Entity("DataLayer.Abstractions.Entities.Person", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Persons");
+                });
+
+            modelBuilder.Entity("DataLayer.Client", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.ToTable("ClientDto");
+                    b.ToTable("Client");
                 });
 
-            modelBuilder.Entity("DataLayer.ContractDto", b =>
+            modelBuilder.Entity("DataLayer.Contract", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -52,14 +69,14 @@ namespace Migrations.Migrations
                     b.ToTable("Contracts");
                 });
 
-            modelBuilder.Entity("DataLayer.TaskDto", b =>
+            modelBuilder.Entity("DataLayer.ContractTask", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int?>("ContractDtoId")
+                    b.Property<int?>("ContractId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")
@@ -70,33 +87,28 @@ namespace Migrations.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ContractDtoId");
+                    b.HasIndex("ContractId");
 
-                    b.ToTable("TaskDto");
+                    b.ToTable("ContractTask");
                 });
 
-            modelBuilder.Entity("DataLayer.ContractDto", b =>
+            modelBuilder.Entity("DataLayer.Contract", b =>
                 {
-                    b.HasOne("DataLayer.ClientDto", "Owner")
-                        .WithMany("Contracts")
+                    b.HasOne("DataLayer.Client", "Owner")
+                        .WithMany()
                         .HasForeignKey("OwnerId");
 
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("DataLayer.TaskDto", b =>
+            modelBuilder.Entity("DataLayer.ContractTask", b =>
                 {
-                    b.HasOne("DataLayer.ContractDto", null)
+                    b.HasOne("DataLayer.Contract", null)
                         .WithMany("Tasks")
-                        .HasForeignKey("ContractDtoId");
+                        .HasForeignKey("ContractId");
                 });
 
-            modelBuilder.Entity("DataLayer.ClientDto", b =>
-                {
-                    b.Navigation("Contracts");
-                });
-
-            modelBuilder.Entity("DataLayer.ContractDto", b =>
+            modelBuilder.Entity("DataLayer.Contract", b =>
                 {
                     b.Navigation("Tasks");
                 });
