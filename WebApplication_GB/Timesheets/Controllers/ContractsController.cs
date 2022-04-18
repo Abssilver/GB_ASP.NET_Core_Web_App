@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using BusinessLogic.Abstractions.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Timesheets.Requests;
 
@@ -9,15 +11,17 @@ namespace Timesheets.Controllers
     public class ContractsController : ControllerBase
     {
         private readonly ILogger<ContractsController> _logger;
+        private readonly IContractService _service;
 
-        public ContractsController(ILogger<ContractsController> logger)
+        public ContractsController(
+            ILogger<ContractsController> logger,
+            IContractService service)
         {
             _logger = logger;
             _logger.LogDebug(1, $"Loggger встроен в {this.GetType()}");
+            _service = service;
         }
         
-        //http://localhost:51685/api/сontracts/register
-        //Body: { "ContractId": "1" }
         /// <summary>
         /// Производит регистрацию контракта (Создание записи в БД)
         /// </summary>
@@ -26,7 +30,7 @@ namespace Timesheets.Controllers
         ///
         ///     POST url:port/api/сontracts/register
         /// 
-        ///     Body: { "ContractId": "1" }
+        ///     Body: { "Contract": "null" }
         ///
         /// </remarks>
         /// <param name="request">Данные запроса по контракту, который подлежит регистрации</param>
@@ -34,73 +38,109 @@ namespace Timesheets.Controllers
         /// <response code="200">Все хорошо</response>
         /// <response code="400">Передали неправильные параметры</response>
         [HttpPost("register")]
-        public IActionResult RegisterContract([FromBody] RegisterContractRequest request)
+        public async Task<IActionResult> RegisterContract([FromBody] RegisterContractRequest request)
         {
-            
             _logger.LogInformation(
-                $"Register contract. Contract id:{request.ContractId}");
+                $"Register contract. Contract id:{request.Contract.Id}");
 
+            await _service.CreateContractAsync(request.Contract);
             return Ok();
         }
         
         /// <summary>
-        /// Производит возврат информации по контрактам
+        /// Производит возврат информации по контракту. Поиск по имени
         /// </summary>
         /// <remarks>
         /// Пример запроса:
         ///
-        ///     GET url:port/api/сontracts/get_all
+        ///     GET url:port/api/сontracts/get_by_name
         ///
+        ///     Body: { "ContractName": "name" }
+        ///     
         /// </remarks>
-        /// <returns>Данные по контрактам</returns>
+        /// <param name="request">Данные запроса по имени контракта</param>
+        /// <returns>Данные по контракту</returns>
         /// <response code="200">Все хорошо</response>
         /// <response code="400">Передали неправильные параметры</response>
-        [HttpGet("get_all")]
-        public IActionResult GetAllContracts()
+        [HttpGet("get_by_name")]
+        public async Task<GetContractByNameResponse> GetContractByName([FromBody] GetContractByNameRequest request)
         {
-            _logger.LogInformation($"Getting all contracts");
-
-            return Ok("You got ok, for now...");
+            _logger.LogInformation($"Getting contract by name: {request.ContractName}");
+            var response = await _service.GetContractByNameAsync(request.ContractName);
+            return await Task.FromResult(new GetContractByNameResponse { Contract = response });
         }
-        
+
         /// <summary>
-        /// Производит возврат информации по выбранному контракту
+        /// Производит возврат информации по выбранному контракту. Поиск по идентификатору
         /// </summary>
         /// <remarks>
         /// Пример запроса:
         ///
-        ///     GET url:port/api/сontracts/get/1
+        ///     GET url:port/api/сontracts/get_by_id
+        /// 
+        ///     Body: { "ContractId": "1" }
         /// 
         /// </remarks>
-        /// <param name="contractId">Id зарегистрированного котракта</param>
+        /// <param name="request">Данные запроса по идентификатору контракта</param>
         /// <returns>Данные по выбранному контракту</returns>
         /// <response code="200">Все хорошо</response>
         /// <response code="400">Передали неправильные параметры</response>
-        [HttpGet("get/{contractId}")]
-        public IActionResult GetContractById([FromRoute] int contractId)
+        [HttpGet("get_by_id")]
+        public async Task<GetContractByIdResponse> GetContractById([FromBody] GetContractByIdRequest request)
         {
-            _logger.LogInformation($"Getting contract: {contractId}");
-
-            return Ok("You got ok, for now...");
+            _logger.LogInformation($"Getting contract by id: {request.ContractId}");
+            var response = await _service.GetContractByIdAsync(request.ContractId);
+            return await Task.FromResult(new GetContractByIdResponse { Contract = response });
         }
 
+        /// <summary>
+        /// Производит возврат информации по контрактам в заданном диапазоне
+        /// </summary>
+        /// <remarks>
+        /// Пример запроса:
+        ///
+        ///     GET url:port/api/сontracts/get_with_pagination
+        ///
+        ///     Body: { "PageNumber": "1", "ElementsPerPage": "5" }
+        /// 
+        /// </remarks>
+        /// <param name="request">Данные запроса по диапазону поиска</param>
+        /// <returns>Данные по контрактам в заданном диапазоне</returns>
+        /// <response code="200">Все хорошо</response>
+        /// <response code="400">Передали неправильные параметры</response>
+        [HttpGet("get_with_pagination")]
+        public async Task<GetContractWithPaginationResponse> GetContractsWithPagination(
+            [FromBody] GetContractsWithPaginationRequest request)
+        {
+            _logger.LogInformation(
+                $"Getting contract with pagination. Page: {request.PageNumber}, Elements : {request.ElementsPerPage}");
+            var response = 
+                await _service.GetContractsAsync(request.PageNumber, request.ElementsPerPage);
+            return await Task.FromResult(new GetContractWithPaginationResponse { Contracts = response });
+        }
+        
+        
         /// <summary>
         /// Производит обновление информации по выбранному контракту
         /// </summary>
         /// <remarks>
         /// Пример запроса:
         ///
-        ///     UPDATE url:port/api/сontracts/get?contractId=1&newValue=value
-        /// 
+        ///     UPDATE url:port/api/сontracts/update
+        ///
+        ///     Body: { "Contract": "null" }
+        ///  
         /// </remarks>
-        /// <param name="contractId">Id зарегистрированного контракта</param>
-        /// <param name="newValue">Новая информация по контракту</param>
+        /// <param name="request">Обновленные данные контракта</param>
         /// <returns>None</returns>
         /// <response code="200">Все хорошо</response>
         /// <response code="400">Передали неправильные параметры</response>
         [HttpPut("update")]
-        public IActionResult UpdateContractById([FromQuery] int contractId, [FromQuery] string newValue)
+        public async Task<IActionResult> UpdateContractById([FromBody] UpdateContractRequest request)
         {
+            _logger.LogInformation(
+                $"Updating contract with id: {request.Contract.Id}");
+            await _service.UpdateContractAsync(request.Contract);
             return Ok();
         }
 
@@ -120,11 +160,11 @@ namespace Timesheets.Controllers
         /// <response code="200">Все хорошо</response>
         /// <response code="400">Передали неправильные параметры</response>
         [HttpDelete("delete")]
-        public IActionResult DeleteContract([FromBody] DeleteContractRequest request)
+        public async Task<IActionResult> DeleteContract([FromBody] DeleteContractRequest request)
         {
             _logger.LogInformation(
                 $"Delete contract. Contract id:{request.ContractId}");
-            
+            await _service.DeleteContractAsync(request.ContractId);
             return Ok();
         }
     }

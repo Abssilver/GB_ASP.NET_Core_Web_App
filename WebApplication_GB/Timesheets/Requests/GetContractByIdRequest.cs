@@ -1,6 +1,6 @@
 ﻿namespace Timesheets.Requests
 {
-    public class DeleteContractRequest
+    public class GetContractByIdRequest
     {
         public int ContractId { get; set; }
     }

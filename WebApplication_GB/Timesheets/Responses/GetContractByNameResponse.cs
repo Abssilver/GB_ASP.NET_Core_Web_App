@@ -2,7 +2,7 @@
 
 namespace Timesheets.Requests
 {
-    public class RegisterContractRequest
+    public class GetContractByNameResponse
     {
         public ContractDto Contract { get; set; }
     }

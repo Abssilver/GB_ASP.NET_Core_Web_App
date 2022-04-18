@@ -1,3 +1,4 @@
+using BusinessLogic;
 using DataLayer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -31,6 +32,9 @@ namespace Timesheets
             {
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"));
             });
+
+            services.RegisterBusinessLogic();
+            services.RegisterDataLayer();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

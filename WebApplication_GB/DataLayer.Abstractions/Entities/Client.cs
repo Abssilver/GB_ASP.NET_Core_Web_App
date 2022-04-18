@@ -2,9 +2,8 @@
 
 namespace DataLayer
 {
-    public class ClientDto
+    public class Client
     {
         public string Id { get; set; }
-        public List<ContractDto> Contracts { get; set; } = new List<ContractDto>();
     }
 }

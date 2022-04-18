@@ -1,7 +1,7 @@
 ﻿
 namespace DataLayer
 {
-    public class TaskDto
+    public class ContractTaskDto
     {
         public int Id { get; set; }
         public string Name { get; set; }
