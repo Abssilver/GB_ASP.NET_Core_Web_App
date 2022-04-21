@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
+using BusinessLogic.Abstractions.DTO;
 
 namespace DataLayer
 {
-    public class ContractDto
+    public class ContractDto : BaseDtoEntity
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
         public string Description { get; set; }
         public List<ContractTaskDto> Tasks { get; set; } = new List<ContractTaskDto>();
         public ClientDto Owner { get; set; }

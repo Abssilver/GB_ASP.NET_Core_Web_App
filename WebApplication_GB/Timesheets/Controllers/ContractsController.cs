@@ -43,7 +43,7 @@ namespace Timesheets.Controllers
             _logger.LogInformation(
                 $"Register contract. Contract id:{request.Contract.Id}");
 
-            await _service.CreateContractAsync(request.Contract);
+            await _service.CreateAsync(request.Contract);
             return Ok();
         }
         
@@ -66,7 +66,7 @@ namespace Timesheets.Controllers
         public async Task<GetContractByNameResponse> GetContractByName([FromBody] GetContractByNameRequest request)
         {
             _logger.LogInformation($"Getting contract by name: {request.ContractName}");
-            var response = await _service.GetContractByNameAsync(request.ContractName);
+            var response = await _service.GetEntityByNameAsync(request.ContractName);
             return await Task.FromResult(new GetContractByNameResponse { Contract = response });
         }
 
@@ -89,7 +89,7 @@ namespace Timesheets.Controllers
         public async Task<GetContractByIdResponse> GetContractById([FromBody] GetContractByIdRequest request)
         {
             _logger.LogInformation($"Getting contract by id: {request.ContractId}");
-            var response = await _service.GetContractByIdAsync(request.ContractId);
+            var response = await _service.GetEntityByIdAsync(request.ContractId);
             return await Task.FromResult(new GetContractByIdResponse { Contract = response });
         }
 
@@ -115,7 +115,7 @@ namespace Timesheets.Controllers
             _logger.LogInformation(
                 $"Getting contract with pagination. Page: {request.PageNumber}, Elements : {request.ElementsPerPage}");
             var response = 
-                await _service.GetContractsAsync(request.PageNumber, request.ElementsPerPage);
+                await _service.GetEntitiesAsync(request.PageNumber, request.ElementsPerPage);
             return await Task.FromResult(new GetContractWithPaginationResponse { Contracts = response });
         }
         
@@ -140,7 +140,7 @@ namespace Timesheets.Controllers
         {
             _logger.LogInformation(
                 $"Updating contract with id: {request.Contract.Id}");
-            await _service.UpdateContractAsync(request.Contract);
+            await _service.UpdateAsync(request.Contract);
             return Ok();
         }
 
@@ -164,7 +164,7 @@ namespace Timesheets.Controllers
         {
             _logger.LogInformation(
                 $"Delete contract. Contract id:{request.ContractId}");
-            await _service.DeleteContractAsync(request.ContractId);
+            await _service.DeleteAsync(request.ContractId);
             return Ok();
         }
     }

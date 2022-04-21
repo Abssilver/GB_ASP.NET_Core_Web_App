@@ -2,6 +2,6 @@
 
 namespace BusinessLogic.Abstractions.Services
 {
-    public interface IContractService: IEntitiesService<ContractDto>
+    public interface IClientService: IEntitiesService<ClientDto>
     { }
 }

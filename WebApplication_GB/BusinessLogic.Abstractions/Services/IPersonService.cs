@@ -6,6 +6,6 @@ namespace BusinessLogic.Abstractions.Services
 {
     public interface IPersonService
     {
-        Task<IEnumerable<PersonDto>> GetPersonsAsync();
+        public Task<IEnumerable<PersonDto>> GetEntitiesAsync(int skip, int take);
     }
 }

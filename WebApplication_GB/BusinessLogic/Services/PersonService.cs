@@ -16,10 +16,14 @@ namespace BusinessLogic.Services
             _repository = repository;
         }
 
-        public async Task<IEnumerable<PersonDto>> GetPersonsAsync()
+        public async Task<IEnumerable<PersonDto>> GetEntitiesAsync(int skip, int take)
         {
-            var result = await _repository.GetPersonsAsync();
-            return result.Select(r => new PersonDto { Id = r.Id, Name = r.Name }).ToArray();
+            var result = await _repository.GetAsync(skip, take);
+            return result.Select(entity => new PersonDto
+            {
+                Id = entity.Id,
+                Name = entity.Name,
+            }).ToArray();
         }
     }
 }

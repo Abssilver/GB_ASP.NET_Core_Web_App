@@ -9,6 +9,8 @@ namespace DataLayer
         public static IServiceCollection RegisterDataLayer(this IServiceCollection services)
         {
             services.AddTransient<IPersonRepository, PersonRepository>();
+            services.AddTransient<IEmployeeRepository, EmployeeRepository>();
+            services.AddTransient<IClientRepository, ClientRepository>();
             return services.AddTransient<IContractRepository, ContractRepository>();
         }
     }

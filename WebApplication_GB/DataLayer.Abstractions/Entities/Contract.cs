@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
+using DataLayer.Abstractions.Entities;
 
 namespace DataLayer
 {
-    public class Contract
+    public class Contract: BaseEntity
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
         public string Description { get; set; }
         public List<ContractTask> Tasks { get; set; } = new List<ContractTask>();
         public Client Owner { get; set; }

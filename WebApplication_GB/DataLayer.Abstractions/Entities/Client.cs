@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using DataLayer.Abstractions.Entities;
 
 namespace DataLayer
 {
-    public class Client
+    public class Client: BaseEntity
     {
-        public string Id { get; set; }
     }
 }

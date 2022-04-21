@@ -1,8 +1,9 @@
 ﻿
+using BusinessLogic.Abstractions.DTO;
+
 namespace DataLayer
 {
-    public class ClientDto
+    public class ClientDto : BaseDtoEntity
     {
-        public string Id { get; set; }
     }
 }

@@ -9,6 +9,8 @@ namespace BusinessLogic
         public static IServiceCollection RegisterBusinessLogic(this IServiceCollection services)
         {
             services.AddTransient<IContractService, ContractService>();
+            services.AddTransient<IClientService, ClientService>();
+            services.AddTransient<IEmployeeService, EmployeeService>();
             return services.AddTransient<IPersonService, PersonService>();
         }
     }

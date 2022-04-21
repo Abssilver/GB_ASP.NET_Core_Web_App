@@ -16,7 +16,7 @@ namespace BusinessLogic.Services
             _repository = repository;
         }
 
-        public async Task<ContractDto> GetContractByIdAsync(int id)
+        public async Task<ContractDto> GetEntityByIdAsync(long id)
         {
             var result = await _repository.GetByIdAsync(id);
             return await Task.FromResult(new ContractDto
@@ -37,7 +37,7 @@ namespace BusinessLogic.Services
             });
         }
 
-        public async Task<ContractDto> GetContractByNameAsync(string name)
+        public async Task<ContractDto> GetEntityByNameAsync(string name)
         {
             var result = await _repository.GetByNameAsync(name);
             return await Task.FromResult(new ContractDto
@@ -58,15 +58,15 @@ namespace BusinessLogic.Services
             });
         }
 
-        public async Task<IEnumerable<ContractDto>> GetContractsAsync(int skip, int take)
+        public async Task<IEnumerable<ContractDto>> GetEntitiesAsync(int skip, int take)
         {
             var result = await _repository.GetAsync(skip, take);
-            return result.Select(contract => new ContractDto
+            return result.Select(entity => new ContractDto
             {
-                Id = contract.Id,
-                Name = contract.Name,
-                Description = contract.Description,
-                Tasks = contract.Tasks.Select(task => new ContractTaskDto()
+                Id = entity.Id,
+                Name = entity.Name,
+                Description = entity.Description,
+                Tasks = entity.Tasks.Select(task => new ContractTaskDto()
                 {
                     Id = task.Id,
                     Name = task.Name,
@@ -74,12 +74,12 @@ namespace BusinessLogic.Services
                 }).ToList(),
                 Owner = new ClientDto
                 {
-                    Id = contract.Owner.Id,
+                    Id = entity.Owner.Id,
                 }
             }).ToArray();
         }
 
-        public Task CreateContractAsync(ContractDto item)
+        public Task CreateAsync(ContractDto item)
         {
             return _repository.CreateAsync(new Contract
             {
@@ -99,22 +99,22 @@ namespace BusinessLogic.Services
             });
         }
 
-        public async Task UpdateContractAsync(ContractDto item)
+        public async Task UpdateAsync(ContractDto item)
         {
-            var contract = await _repository.GetByIdAsync(item.Id);
-            contract.Name = item.Name;
-            contract.Description = item.Description;
-            contract.Tasks = item.Tasks.Select(task => new ContractTask
+            var entity = await _repository.GetByIdAsync(item.Id);
+            entity.Name = item.Name;
+            entity.Description = item.Description;
+            entity.Tasks = item.Tasks.Select(task => new ContractTask
             {
                 Id = task.Id,
                 Name = task.Name,
                 Time = task.Time,
             }).ToList();
-            contract.Owner = new Client { Id = item.Owner.Id, };
-            await _repository.UpdateAsync(contract);
+            entity.Owner = new Client { Id = item.Owner.Id, };
+            await _repository.UpdateAsync(entity);
         }
 
-        public Task DeleteContractAsync(int id)
+        public Task DeleteAsync(long id)
         {
             return _repository.DeleteAsync(id);
         }

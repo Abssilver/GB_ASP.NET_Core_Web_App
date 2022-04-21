@@ -1,8 +1,9 @@
-﻿namespace DataLayer
+﻿using DataLayer.Abstractions.Entities;
+
+namespace DataLayer
 {
-    public class Invoice
+    public class Invoice : BaseEntity
     {
-        public string Id { get; set; }
         public string Price { get; set; }
         public Client Payer { get; set; }
     }

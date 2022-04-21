@@ -1,9 +1,9 @@
-﻿namespace DataLayer
+﻿using DataLayer.Abstractions.Entities;
+
+namespace DataLayer
 {
-    public class Employee
+    public class Employee : BaseEntity
     {
-        public int Id { get; set; }
-        public string FullName { get; set; }
         public decimal Salary { get; set; }
         public long Time { get; set; }
     }

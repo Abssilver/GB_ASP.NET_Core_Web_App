@@ -1,8 +1,9 @@
-﻿namespace DataLayer
+﻿using BusinessLogic.Abstractions.DTO;
+
+namespace DataLayer
 {
-    public class InvoiceDto
+    public class InvoiceDto : BaseDtoEntity
     {
-        public string Id { get; set; }
         public string Price { get; set; }
         public ClientDto Payer { get; set; }
     }
