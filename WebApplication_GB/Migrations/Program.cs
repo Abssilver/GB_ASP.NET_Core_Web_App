@@ -1,4 +1,5 @@
-﻿using DataLayer;
+﻿using System.IO;
+using DataLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,7 +22,7 @@ namespace Migrations
                     services.AddDbContext<ApplicationDataContext>(options =>
                     {
                         options.UseNpgsql(
-                                "Host=localhost;Port=5432;Username=postgres;Password=geekbrainswebapplication;Database=postgres",
+                                CreateConfigurationRoot().GetConnectionString("DefaultConnection"),
                                 builder => builder.MigrationsAssembly(nameof(Migrations)))
                             .UseLoggerFactory(LoggerFactory.Create(builder =>
                             {
@@ -35,13 +36,13 @@ namespace Migrations
                     services.AddHostedService<Worker>();
                 });
         
-        /*public static IConfigurationRoot CreateConfigurationRoot()
+        private static IConfigurationRoot CreateConfigurationRoot()
         {
             var configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
+                .SetBasePath(Path.GetFullPath(@"..\..\..", Directory.GetCurrentDirectory()))
                 .AddJsonFile("appsettings.json")
                 .Build();
             return configuration;
-        }*/
+        }
     }
 }
