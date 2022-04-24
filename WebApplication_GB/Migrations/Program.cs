@@ -1,5 +1,4 @@
-﻿using System;
-using DataLayer;
+﻿using DataLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Migrations
 {
-    class Program
+    static class Program
     {
         public static void Main(string[] args)
         {
@@ -22,7 +21,7 @@ namespace Migrations
                     services.AddDbContext<ApplicationDataContext>(options =>
                     {
                         options.UseNpgsql(
-                                hostContext.Configuration.GetConnectionString("DefaultConnection"),
+                                "Host=localhost;Port=5432;Username=postgres;Password=geekbrainswebapplication;Database=postgres",
                                 builder => builder.MigrationsAssembly(nameof(Migrations)))
                             .UseLoggerFactory(LoggerFactory.Create(builder =>
                             {
@@ -33,7 +32,16 @@ namespace Migrations
                                         && level == LogLevel.Information);
                             }));
                     });
-                    //services.AddHostedService<Worker>();
+                    services.AddHostedService<Worker>();
                 });
+        
+        /*public static IConfigurationRoot CreateConfigurationRoot()
+        {
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
+            return configuration;
+        }*/
     }
 }

@@ -3,15 +3,17 @@ using System;
 using DataLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Migrations.Migrations
 {
     [DbContext(typeof(ApplicationDataContext))]
-    partial class ApplicationDataContextModelSnapshot : ModelSnapshot
+    [Migration("20220423214220_initial")]
+    partial class initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,19 +38,24 @@ namespace Migrations.Migrations
 
             modelBuilder.Entity("DataLayer.Client", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Name")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Client");
+                    b.ToTable("Clients");
                 });
 
             modelBuilder.Entity("DataLayer.Contract", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("bigint")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<string>("Description")
@@ -57,8 +64,8 @@ namespace Migrations.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<string>("OwnerId")
-                        .HasColumnType("text");
+                    b.Property<long?>("OwnerId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -69,13 +76,13 @@ namespace Migrations.Migrations
 
             modelBuilder.Entity("DataLayer.ContractTask", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("bigint")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int?>("ContractId")
-                        .HasColumnType("integer");
+                    b.Property<long?>("ContractId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
@@ -88,6 +95,27 @@ namespace Migrations.Migrations
                     b.HasIndex("ContractId");
 
                     b.ToTable("ContractTask");
+                });
+
+            modelBuilder.Entity("DataLayer.Employee", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Salary")
+                        .HasColumnType("numeric");
+
+                    b.Property<long>("Time")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Employees");
                 });
 
             modelBuilder.Entity("DataLayer.Contract", b =>

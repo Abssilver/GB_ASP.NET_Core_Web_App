@@ -8,14 +8,31 @@ namespace Migrations.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Client",
+                name: "Clients",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false)
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Client", x => x.Id);
+                    table.PrimaryKey("PK_Clients", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Employees",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Salary = table.Column<decimal>(type: "numeric", nullable: false),
+                    Time = table.Column<long>(type: "bigint", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Employees", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -35,19 +52,19 @@ namespace Migrations.Migrations
                 name: "Contracts",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
-                    OwnerId = table.Column<string>(type: "text", nullable: true)
+                    OwnerId = table.Column<long>(type: "bigint", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Contracts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Contracts_Client_OwnerId",
+                        name: "FK_Contracts_Clients_OwnerId",
                         column: x => x.OwnerId,
-                        principalTable: "Client",
+                        principalTable: "Clients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -56,11 +73,11 @@ namespace Migrations.Migrations
                 name: "ContractTask",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: true),
                     Time = table.Column<long>(type: "bigint", nullable: false),
-                    ContractId = table.Column<int>(type: "integer", nullable: true)
+                    ContractId = table.Column<long>(type: "bigint", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -90,13 +107,16 @@ namespace Migrations.Migrations
                 name: "ContractTask");
 
             migrationBuilder.DropTable(
+                name: "Employees");
+
+            migrationBuilder.DropTable(
                 name: "Persons");
 
             migrationBuilder.DropTable(
                 name: "Contracts");
 
             migrationBuilder.DropTable(
-                name: "Client");
+                name: "Clients");
         }
     }
 }
