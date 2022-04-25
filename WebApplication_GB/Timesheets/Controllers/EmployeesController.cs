@@ -1,14 +1,16 @@
 ﻿using System.Threading.Tasks;
 using BusinessLogic.Abstractions.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Timesheets.Requests;
 
 namespace Timesheets.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class EmployeesController : ControllerBase
+    public sealed class EmployeesController : ControllerBase
     {
         private readonly ILogger<EmployeesController> _logger;
         private readonly IEmployeeService _service;
@@ -18,7 +20,7 @@ namespace Timesheets.Controllers
             IEmployeeService service)
         {
             _logger = logger;
-            _logger.LogDebug(1, $"Loggger встроен в {this.GetType()}");
+            _logger.LogDebug(1, $"Logger встроен в {this.GetType()}");
             _service = service;
         }
         
