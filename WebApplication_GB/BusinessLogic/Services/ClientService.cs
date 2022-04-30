@@ -19,21 +19,21 @@ namespace BusinessLogic.Services
         public async Task<ClientDto> GetEntityByIdAsync(long id)
         {
             var result = await _repository.GetByIdAsync(id);
-            return await Task.FromResult(new ClientDto
+            return new ClientDto
             {
                 Id = result.Id,
                 Name = result.Name,
-            });
+            };
         }
 
         public async Task<ClientDto> GetEntityByNameAsync(string name)
         {
             var result = await _repository.GetByNameAsync(name);
-            return await Task.FromResult(new ClientDto
+            return new ClientDto
             {
                 Id = result.Id,
                 Name = result.Name,
-            });
+            };
         }
 
         public async Task<IEnumerable<ClientDto>> GetEntitiesAsync(int skip, int take)

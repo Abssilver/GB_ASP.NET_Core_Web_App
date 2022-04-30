@@ -19,25 +19,25 @@ namespace BusinessLogic.Services
         public async Task<EmployeeDto> GetEntityByIdAsync(long id)
         {
             var result = await _repository.GetByIdAsync(id);
-            return await Task.FromResult(new EmployeeDto
+            return new EmployeeDto
             {
                 Id = result.Id,
                 Name = result.Name,
                 Salary = result.Salary,
                 Time = result.Time,
-            });
+            };
         }
 
         public async Task<EmployeeDto> GetEntityByNameAsync(string name)
         {
             var result = await _repository.GetByNameAsync(name);
-            return await Task.FromResult(new EmployeeDto
+            return new EmployeeDto
             {
                 Id = result.Id,
                 Name = result.Name,
                 Salary = result.Salary,
                 Time = result.Time,
-            });
+            };
         }
 
         public async Task<IEnumerable<EmployeeDto>> GetEntitiesAsync(int skip, int take)
@@ -72,9 +72,9 @@ namespace BusinessLogic.Services
             await _repository.UpdateAsync(entity);
         }
 
-        public Task DeleteAsync(long id)
+        public async Task DeleteAsync(long id)
         {
-            return _repository.DeleteAsync(id);
+            await _repository.DeleteAsync(id);
         }
     }
 }

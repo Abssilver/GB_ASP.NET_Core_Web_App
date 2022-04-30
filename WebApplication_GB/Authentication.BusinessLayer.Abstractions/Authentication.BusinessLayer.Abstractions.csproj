@@ -6,12 +6,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.16" />
+      <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.17.0" />
       <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.17.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Authentication.BusinessLayer.Abstractions\Authentication.BusinessLayer.Abstractions.csproj" />
       <ProjectReference Include="..\BusinessLogic.Abstractions\BusinessLogic.Abstractions.csproj" />
     </ItemGroup>
 

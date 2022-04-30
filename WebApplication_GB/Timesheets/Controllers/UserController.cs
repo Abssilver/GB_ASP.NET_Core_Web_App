@@ -1,48 +1,69 @@
 ﻿using System;
-using Authentication.Services;
+using System.Threading.Tasks;
+using Authentication.BusinessLayer.Abstractions.Services;
+using BusinessLogic.Abstractions.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Timesheets.Requests;
 
 namespace Timesheets.Controllers
 {
-    public sealed class UsersController : ControllerBase
+    [ApiController]
+    [Route("[controller]")]
+    public sealed class UserController : ControllerBase
     {
-        private readonly ILogger<UsersController> _logger;
+        private readonly ILogger<UserController> _logger;
         private readonly IUserService _userService;
+        private readonly ILoginService _loginService;
 
-        public UsersController(
-            ILogger<UsersController> logger,
-            IUserService userService)
+
+        public UserController(
+            ILogger<UserController> logger,
+            IUserService userService,
+            ILoginService loginService)
         {
             _logger = logger;
             _logger.LogDebug(1, $"Logger встроен в {this.GetType()}");
             _userService = userService;
+            _loginService = loginService;
         }
 
 
         [AllowAnonymous]
-        [HttpPost("authenticate")]
-        public IActionResult Authenticate([FromQuery] string user, string
-            password)
+        [HttpPost]
+        public async Task<IActionResult> Authenticate([FromBody] AuthenticateRequest request)
         {
-            var token = _userService.Authenticate(user, password);
-            if (token is null)
+            var user = await _userService.GetUser(new LoginDto
+            { 
+                Username = request.Login, 
+                Password = request.Password,
+            });
+
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            var response = await _loginService.Authenticate(user);
+            
+            if (response is null)
             {
                 return BadRequest(new { message = "Username or password is incorrect" });
             }
 
-            SetTokenCookie(token.RefreshToken);
-            return Ok(token);
+            SetTokenCookie(response.RefreshToken);
+
+            return Ok(response);
         }
 
         [Authorize]
         [HttpPost("refresh-token")]
-        public IActionResult Refresh()
+        public async Task<IActionResult> Refresh()
         {
             var oldRefreshToken = Request.Cookies["refreshToken"];
-            var newRefreshToken = _userService.RefreshToken(oldRefreshToken);
+            var newRefreshToken = await _userService.RefreshToken(oldRefreshToken);
             if (string.IsNullOrEmpty(newRefreshToken))
             {
                 return Unauthorized(new { message = "Invalid token" });

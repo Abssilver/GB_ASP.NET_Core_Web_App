@@ -13,9 +13,12 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Authentication.BusinessLayer\Authentication.BusinessLayer.csproj" />
+      <ProjectReference Include="..\Authentication.DataLayer\Authentication.DataLayer.csproj" />
       <ProjectReference Include="..\Authentication\Authentication.csproj" />
       <ProjectReference Include="..\BusinessLogic\BusinessLogic.csproj" />
       <ProjectReference Include="..\DataLayer\DataLayer.csproj" />
+      <ProjectReference Include="..\Migrations\Migrations.csproj" />
     </ItemGroup>
 
 </Project>

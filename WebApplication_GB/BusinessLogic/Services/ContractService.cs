@@ -19,7 +19,7 @@ namespace BusinessLogic.Services
         public async Task<ContractDto> GetEntityByIdAsync(long id)
         {
             var result = await _repository.GetByIdAsync(id);
-            return await Task.FromResult(new ContractDto
+            return new ContractDto
             {
                 Id = result.Id,
                 Name = result.Name,
@@ -34,13 +34,13 @@ namespace BusinessLogic.Services
                 {
                     Id = result.Owner.Id,
                 }
-            });
+            };
         }
 
         public async Task<ContractDto> GetEntityByNameAsync(string name)
         {
             var result = await _repository.GetByNameAsync(name);
-            return await Task.FromResult(new ContractDto
+            return new ContractDto
             {
                 Id = result.Id,
                 Name = result.Name,
@@ -55,7 +55,7 @@ namespace BusinessLogic.Services
                 {
                     Id = result.Owner.Id,
                 }
-            });
+            };
         }
 
         public async Task<IEnumerable<ContractDto>> GetEntitiesAsync(int skip, int take)
