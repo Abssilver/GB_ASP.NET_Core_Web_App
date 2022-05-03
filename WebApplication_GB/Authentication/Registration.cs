@@ -1,5 +1,5 @@
-﻿using Authentication.BusinessLayer.Abstractions.JwtOptions;
-using Authentication.BusinessLayer.Abstractions.Services;
+﻿using System.Security.Claims;
+using Authentication.BusinessLayer.Abstractions.JwtOptions;
 using Authentication.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
@@ -14,6 +14,8 @@ namespace Authentication
             this IServiceCollection services, 
             IConfiguration configuration)
         {
+            services.AddControllers();
+
             services.AddCors();
             services.Configure<JwtAccessOptions>(configuration.GetSection("Authentication:JwtAccessOptions"));
             services.Configure<JwtRefreshOptions>(configuration.GetSection("Authentication:JwtRefreshOptions"));
@@ -36,6 +38,15 @@ namespace Authentication
                     options.SaveToken = true;
                     options.TokenValidationParameters = jwtAccessSettings.GetTokenValidationParameters();
                 });
+             
+             services.AddAuthorization(options =>
+                 options.AddPolicy("UserOnly", policy => policy.RequireClaim(ClaimTypes.Role, "User")));
+             
+             services.AddCors(x => x.AddPolicy("AuthPolicy", b => b
+                 .SetIsOriginAllowed(origin => true)
+                 .AllowAnyMethod()
+                 .AllowAnyHeader()
+                 .AllowCredentials()));
              
              return services;
         }

@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Security.Claims;
-using Authentication.BusinessLayer.Abstractions.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace Authentication.Datalayer.Abstractions.Entities
 {
-    public class User
+    public class User : IdentityUser
     {
-        public Guid Id { get; set; }
-        public string Login { get; set; }
-        public string Password { get; set; }
-        public IEnumerable<Claim> Claims { get; set; }
-        public RefreshToken LatestRefreshToken { get; set; }
+        public string RefreshToken { get; set; }
+        public DateTime TokenExpires { get; set; }
     }
 }

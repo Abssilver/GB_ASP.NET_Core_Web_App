@@ -26,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authentication.BusinessLaye
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authentication.DataLayer", "Authentication.DataLayer\Authentication.DataLayer.csproj", "{C75DFBAB-DE00-447B-B46A-BBD08848823A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authentication.Migrations", "Authentication.Migrations\Authentication.Migrations.csproj", "{38901FB0-8278-4B9F-9599-62225C915324}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -84,5 +86,9 @@ Global
 		{C75DFBAB-DE00-447B-B46A-BBD08848823A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C75DFBAB-DE00-447B-B46A-BBD08848823A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C75DFBAB-DE00-447B-B46A-BBD08848823A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38901FB0-8278-4B9F-9599-62225C915324}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38901FB0-8278-4B9F-9599-62225C915324}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38901FB0-8278-4B9F-9599-62225C915324}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38901FB0-8278-4B9F-9599-62225C915324}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

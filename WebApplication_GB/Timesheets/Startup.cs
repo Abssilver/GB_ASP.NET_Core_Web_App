@@ -1,6 +1,7 @@
 using Authentication;
 using Authentication.BusinessLayer;
 using Authentication.DataLayer;
+using Authentication.Migrations;
 using BusinessLogic;
 using DataLayer;
 using Microsoft.AspNetCore.Builder;
@@ -28,6 +29,7 @@ namespace Timesheets
             services.RegisterAuthentication(Configuration);
             services.RegisterAuthenticationBusinessLayer();
             services.RegisterAuthenticationDataLayer();
+            services.RegisterAuthenticationMigrations(Configuration);
             services.RegisterMigrations(Configuration);
             services.AddControllers();
             services.ConfigureBackendSwagger();
@@ -50,11 +52,7 @@ namespace Timesheets
 
             app.UseRouting();
             
-            app.UseCors(x => x
-                .SetIsOriginAllowed(origin => true)
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials());
+            app.UseCors("AuthPolicy");
             
             app.UseAuthentication();
             app.UseAuthorization();

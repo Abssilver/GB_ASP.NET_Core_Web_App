@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Authentication.BusinessLayer.Abstractions.Services;
+using Authentication.Requests;
 using BusinessLogic.Abstractions.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Timesheets.Requests;
 
-namespace Timesheets.Controllers
+namespace Authentication.Controllers
 {
     [ApiController]
     [Route("[controller]")]
@@ -32,7 +32,7 @@ namespace Timesheets.Controllers
 
 
         [AllowAnonymous]
-        [HttpPost]
+        [HttpPost("login")]
         public async Task<IActionResult> Authenticate([FromBody] AuthenticateRequest request)
         {
             var user = await _userService.GetUser(new LoginDto

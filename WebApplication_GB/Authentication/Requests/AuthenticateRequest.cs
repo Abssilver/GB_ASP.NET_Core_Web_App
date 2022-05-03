@@ -1,4 +1,4 @@
-﻿namespace Timesheets.Requests
+﻿namespace Authentication.Requests
 {
     public class AuthenticateRequest
     {

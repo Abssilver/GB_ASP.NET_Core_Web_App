@@ -1,5 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Authentication.BusinessLayer.Abstractions.DTO;
 using BusinessLogic.Abstractions.DTO;
 
 namespace Authentication.BusinessLayer.Abstractions.Services
@@ -7,8 +7,8 @@ namespace Authentication.BusinessLayer.Abstractions.Services
     public interface IUserService
     {
         Task<UserDto> GetUser(LoginDto login);
-        Task<UserDto> GetUserById(Guid userId);
-        Task<Guid> RegisterUser(SignInDto signIn);
+        Task<UserDto> GetUserById(string userId);
+        Task<bool> RegisterUser(SignInDto signIn);
         Task<string> RefreshToken(string token);
     }
 }

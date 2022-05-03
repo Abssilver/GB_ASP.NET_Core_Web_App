@@ -1,5 +1,5 @@
 ﻿using Authentication.BusinessLayer.Abstractions.Services;
-using Authentication.Services;
+using Authentication.BusinessLayer.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Authentication.BusinessLayer
@@ -9,8 +9,8 @@ namespace Authentication.BusinessLayer
         public static IServiceCollection RegisterAuthenticationBusinessLayer(
             this IServiceCollection services)
         {
-            services.AddSingleton<ILoginService, LoginService>();
-            return services.AddSingleton<IUserService, UserService>();
+            services.AddTransient<ILoginService, LoginService>();
+            return services.AddTransient<IUserService, UserService>();
         }
     }
 }

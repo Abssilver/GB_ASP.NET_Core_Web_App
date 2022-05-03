@@ -1,17 +1,16 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Authentication.BusinessLayer.Abstractions.DTO;
 using Authentication.BusinessLayer.Abstractions.Models;
-using Authentication.Datalayer.Abstractions.Entities;
 
 namespace Authentication.Datalayer.Abstractions.Repositories
 {
     public interface IUserRepository
     {
-        Task<User> GetUserAsync(string login, string passwordHash);
-        Task<User> GetUserByIdAsync(Guid id);
-        Task CreateAsync(User item);
-        Task UpdateAsync(User item);
-        Task DeleteAsync(Guid id);
-        Task UpdateUserRefreshTokenAsync(Guid id, RefreshToken token);
+        Task<UserDto> GetUserAsync(string login, string passwordHash);
+        Task<UserDto> GetUserByIdAsync(string id);
+        Task<bool> CreateAsync(string login, string passwordHash, IEnumerable<Claim> claims);
+        Task UpdateUserRefreshTokenAsync(string id, RefreshToken token);
     }
 }

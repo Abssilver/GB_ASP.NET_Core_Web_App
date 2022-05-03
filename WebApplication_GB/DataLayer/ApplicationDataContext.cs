@@ -13,6 +13,5 @@ namespace DataLayer
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Person> Persons { get; set; }
         public DbSet<Contract> Contracts { get; set; }
-        public DbSet<User> Users { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
+using Authentication.BusinessLayer.Abstractions.DTO;
 using Authentication.BusinessLayer.Abstractions.Models;
-using BusinessLogic.Abstractions.DTO;
 
 namespace Authentication.BusinessLayer.Abstractions.Services
 {

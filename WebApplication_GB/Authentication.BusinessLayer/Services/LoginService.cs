@@ -1,15 +1,14 @@
-﻿using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
+using Authentication.BusinessLayer.Abstractions.DTO;
 using Authentication.BusinessLayer.Abstractions.Models;
 using Authentication.BusinessLayer.Abstractions.Services;
+using Authentication.BusinessLayer.Extensions;
 using Authentication.Datalayer.Abstractions.Repositories;
 using Authentication.Models;
-using BusinessLogic.Abstractions.DTO;
 using Microsoft.Extensions.Options;
 
-namespace Authentication.Services
+namespace Authentication.BusinessLayer.Services
 {
     public class LoginService : ILoginService
     {
@@ -29,16 +28,9 @@ namespace Authentication.Services
         
         public async Task<LoginResponse> Authenticate(UserDto user)
         {
-            var claims = new List<Claim>
-            {
-                new (JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new (JwtRegisteredClaimNames.UniqueName, user.Login),
-                new (ClaimsIdentity.DefaultRoleClaimType, user.Role)
-            };
-
-            var accessTokenRaw = _jwtAccessOptions.GenerateToken(claims);
+            var accessTokenRaw = _jwtAccessOptions.GenerateToken(user.PopulateClaims());
             var accessToken = new JwtSecurityTokenHandler().WriteToken(accessTokenRaw);
-            var refreshTokenRaw = _jwtRefreshOptions.GenerateToken(claims);
+            var refreshTokenRaw = _jwtRefreshOptions.GenerateToken(user.PopulateClaims());
             var refreshToken = new JwtSecurityTokenHandler().WriteToken(refreshTokenRaw);
 
             var loginResponse = new LoginResponse

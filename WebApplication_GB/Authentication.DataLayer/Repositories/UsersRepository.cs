@@ -1,74 +1,100 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Authentication.BusinessLayer.Abstractions.DTO;
 using Authentication.BusinessLayer.Abstractions.Models;
 using Authentication.Datalayer.Abstractions.Entities;
 using Authentication.Datalayer.Abstractions.Repositories;
-using DataLayer;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace Authentication.DataLayer.Repositories
 {
     public sealed class UsersRepository : IUserRepository
     {
-        private readonly ApplicationDataContext _context;
-        private readonly DbSet<User> _users;
-
-        public UsersRepository(ApplicationDataContext context)
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
+        public UsersRepository(UserManager<User> userManager, SignInManager<User> signInManager)
         {
-            _context = context;
-            _users = context.Users;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
-        public async Task<User> GetUserAsync(string login, string passwordHash)
+        public async Task<UserDto> GetUserAsync(string login, string passwordHash)
         {
-            return await _users
-                    .Where(entity=> entity.Login.Equals(login) && entity.Password == passwordHash)
-                    .FirstOrDefaultAsync(CancellationToken.None);
+            var result = await _signInManager
+                .PasswordSignInAsync(login, passwordHash, false, false);
+
+            if (!result.Succeeded)
+            {
+                return null;
+            }
+
+            var user = await _userManager.FindByEmailAsync(login);
+            if (user is null)
+            {
+                return null;
+            }
+
+            var claims = await _userManager.GetClaimsAsync(user);
+            return new UserDto
+            {
+                Id = user.Id,
+                Claims = claims.ToImmutableArray(),
+                LatestRefreshToken = new RefreshToken
+                {
+                    Token = user.RefreshToken,
+                    Expires = user.TokenExpires,
+                }
+            };
         }
 
-        public async Task<User> GetUserByIdAsync(Guid id)
+        public async Task<UserDto> GetUserByIdAsync(string id)
         {
-            return await _users
-                .Where(e => e.Id == id)
-                .FirstOrDefaultAsync(CancellationToken.None);
+            var user = await _userManager.FindByIdAsync(id);
+            if (user is null)
+            {
+                return null;
+            }
+            var claims = await _userManager.GetClaimsAsync(user);
+            return new UserDto
+            {
+                Id = user.Id,
+                Claims = claims.ToImmutableArray(),
+                LatestRefreshToken = new RefreshToken
+                {
+                    Token = user.RefreshToken,
+                    Expires = user.TokenExpires,
+                }
+            };
         }
 
-        public async Task CreateAsync(User item)
+        public async Task<bool> CreateAsync(string login, string passwordHash, IEnumerable<Claim> claims)
         {
-            await _users.AddAsync(item);
-            await _context.SaveChangesAsync(CancellationToken.None);
+            var user = new User
+            {
+                UserName = login,
+                Email = login,
+            };
+            var createResult = await _userManager.CreateAsync(user, passwordHash);
+            if (!createResult.Succeeded)
+            {
+                return false;
+            }
+            var claimsResult = await _userManager.AddClaimsAsync(user, claims);
+            
+            return claimsResult.Succeeded;
         }
-
-        public async Task UpdateAsync(User item)
+        public async Task UpdateUserRefreshTokenAsync(string id, RefreshToken token)
         {
-            _users.Update(item);
-            await _context.SaveChangesAsync(CancellationToken.None);
-        }
-
-        public async Task DeleteAsync(Guid id)
-        {
-            var entity = await GetUserByIdAsync(id);
+            var entity = await _userManager.FindByIdAsync(id);
             if (entity is null)
             {
                 return;
             }
-            _context.Remove(entity);
-            await _context.SaveChangesAsync(CancellationToken.None);
-        }
-
-        public async Task UpdateUserRefreshTokenAsync(Guid id, RefreshToken token)
-        {
-            var entity = await GetUserByIdAsync(id);
-            if (entity is null)
-            {
-                return;
-            }
-            var refreshToken = entity.LatestRefreshToken;
-            refreshToken.Token = token.Token;
-            refreshToken.Expires = token.Expires;
-            await _context.SaveChangesAsync(CancellationToken.None);
+            entity.RefreshToken = token.Token;
+            entity.TokenExpires = token.Expires;
+            await _userManager.UpdateAsync(entity);
         }
     }
 }

@@ -25,7 +25,9 @@ namespace Migrations
                     }));
             });
             
-            return services.AddHostedService<Worker>();
+            //services.AddHostedService<Worker>();
+            
+            return services;
         }
     }
 }
