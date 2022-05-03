@@ -39,6 +39,7 @@ namespace Timesheets.Controllers
         /// <returns>None</returns>
         /// <response code="200">Все хорошо</response>
         /// <response code="400">Передали неправильные параметры</response>
+        /// <response code="401">Пользователь не прошел аутентификацию</response>
         [HttpPost("register")]
         public async Task<IActionResult> RegisterEmployee([FromBody] RegisterEmployeeRequest request)
         {
@@ -64,6 +65,7 @@ namespace Timesheets.Controllers
         /// <returns>Данные по работнику</returns>
         /// <response code="200">Все хорошо</response>
         /// <response code="400">Передали неправильные параметры</response>
+        /// <response code="401">Пользователь не прошел аутентификацию</response>
         [HttpGet("get_by_name")]
         public async Task<GetEmployeeByNameResponse> GetEmployeeByName([FromBody] GetEmployeeByNameRequest request)
         {
@@ -87,6 +89,7 @@ namespace Timesheets.Controllers
         /// <returns>Данные по выбранному работнику</returns>
         /// <response code="200">Все хорошо</response>
         /// <response code="400">Передали неправильные параметры</response>
+        /// <response code="401">Пользователь не прошел аутентификацию</response>
         [HttpGet("get_by_id")]
         public async Task<GetEmployeeByIdResponse> GetEmployeeById([FromBody] GetEmployeeByIdRequest request)
         {
@@ -110,6 +113,7 @@ namespace Timesheets.Controllers
         /// <returns>Данные по работникам в заданном диапазоне</returns>
         /// <response code="200">Все хорошо</response>
         /// <response code="400">Передали неправильные параметры</response>
+        /// <response code="401">Пользователь не прошел аутентификацию</response>
         [HttpGet("get_with_pagination")]
         public async Task<GetEmployeeWithPaginationResponse> GetEmployeesWithPagination(
             [FromBody] GetEmployeesWithPaginationRequest request)
@@ -137,6 +141,7 @@ namespace Timesheets.Controllers
         /// <returns>None</returns>
         /// <response code="200">Все хорошо</response>
         /// <response code="400">Передали неправильные параметры</response>
+        /// <response code="401">Пользователь не прошел аутентификацию</response>
         [HttpPut("update")]
         public async Task<IActionResult> UpdateEmployeeById([FromBody] UpdateEmployeeRequest request)
         {
@@ -161,6 +166,7 @@ namespace Timesheets.Controllers
         /// <returns>None</returns>
         /// <response code="200">Все хорошо</response>
         /// <response code="400">Передали неправильные параметры</response>
+        /// <response code="401">Пользователь не прошел аутентификацию</response>
         [HttpDelete("delete")]
         public async Task<IActionResult> DeleteEmployee([FromBody] DeleteEmployeeRequest request)
         {

@@ -30,7 +30,22 @@ namespace Authentication.Controllers
             _loginService = loginService;
         }
 
-
+        /// <summary>
+        /// Производит выдачу прав пользователю
+        /// </summary>
+        /// <remarks>
+        /// Пример запроса:
+        ///
+        ///     POST url:port/api/user/login
+        /// 
+        ///     Body: { "Login": "BigBob" , "Password": "NoOneHackMeAnyMore" }
+        ///
+        /// </remarks>
+        /// <param name="request">Данные запроса по пользователю, который входит в систему</param>
+        /// <returns>Токены доступа и обновления</returns>
+        /// <response code="200">Все хорошо</response>
+        /// <response code="400">Передали неправильные параметры</response>
+        /// <response code="401">Пользователен не найден</response>
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Authenticate([FromBody] AuthenticateRequest request)
@@ -58,6 +73,19 @@ namespace Authentication.Controllers
             return Ok(response);
         }
 
+        /// <summary>
+        /// Производит обноление в БД refresh токена. Старый берется из cookie
+        /// </summary>
+        /// <remarks>
+        /// Пример запроса:
+        ///
+        ///     POST url:port/api/user/refresh-token
+        /// 
+        /// </remarks>
+        /// <returns>Новый токен обновления</returns>
+        /// <response code="200">Все хорошо</response>
+        /// <response code="400">Передали неправильные параметры</response>
+        /// <response code="401">Пользователь не прошел аутентификацию</response>
         [Authorize]
         [HttpPost("refresh-token")]
         public async Task<IActionResult> Refresh()

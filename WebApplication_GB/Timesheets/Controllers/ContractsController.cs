@@ -39,6 +39,7 @@ namespace Timesheets.Controllers
         /// <returns>None</returns>
         /// <response code="200">Все хорошо</response>
         /// <response code="400">Передали неправильные параметры</response>
+        /// <response code="401">Пользователь не прошел аутентификацию</response> 
         [HttpPost("register")]
         public async Task<IActionResult> RegisterContract([FromBody] RegisterContractRequest request)
         {
@@ -64,6 +65,7 @@ namespace Timesheets.Controllers
         /// <returns>Данные по контракту</returns>
         /// <response code="200">Все хорошо</response>
         /// <response code="400">Передали неправильные параметры</response>
+        /// <response code="401">Пользователь не прошел аутентификацию</response>
         [HttpGet("get_by_name")]
         public async Task<GetContractByNameResponse> GetContractByName([FromBody] GetContractByNameRequest request)
         {
@@ -87,6 +89,7 @@ namespace Timesheets.Controllers
         /// <returns>Данные по выбранному контракту</returns>
         /// <response code="200">Все хорошо</response>
         /// <response code="400">Передали неправильные параметры</response>
+        /// <response code="401">Пользователь не прошел аутентификацию</response>
         [HttpGet("get_by_id")]
         public async Task<GetContractByIdResponse> GetContractById([FromBody] GetContractByIdRequest request)
         {
@@ -110,6 +113,7 @@ namespace Timesheets.Controllers
         /// <returns>Данные по контрактам в заданном диапазоне</returns>
         /// <response code="200">Все хорошо</response>
         /// <response code="400">Передали неправильные параметры</response>
+        /// <response code="401">Пользователь не прошел аутентификацию</response>
         [HttpGet("get_with_pagination")]
         public async Task<GetContractWithPaginationResponse> GetContractsWithPagination(
             [FromBody] GetContractsWithPaginationRequest request)
@@ -137,6 +141,7 @@ namespace Timesheets.Controllers
         /// <returns>None</returns>
         /// <response code="200">Все хорошо</response>
         /// <response code="400">Передали неправильные параметры</response>
+        /// <response code="401">Пользователь не прошел аутентификацию</response>
         [HttpPut("update")]
         public async Task<IActionResult> UpdateContractById([FromBody] UpdateContractRequest request)
         {
@@ -161,6 +166,7 @@ namespace Timesheets.Controllers
         /// <returns>None</returns>
         /// <response code="200">Все хорошо</response>
         /// <response code="400">Передали неправильные параметры</response>
+        /// <response code="401">Пользователь не прошел аутентификацию</response>
         [HttpDelete("delete")]
         public async Task<IActionResult> DeleteContract([FromBody] DeleteContractRequest request)
         {

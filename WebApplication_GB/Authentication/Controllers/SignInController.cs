@@ -25,6 +25,21 @@ namespace Authentication.Controllers
             _logger.LogDebug(1, $"Logger встроен в {this.GetType()}");
         }
 
+        /// <summary>
+        /// Производит регистрацию пользователя в системе
+        /// </summary>
+        /// <remarks>
+        /// Пример запроса:
+        ///
+        ///     POST url:port/api/signin/registration
+        /// 
+        ///     Body: { "Username": "BigBob" , "Password": "NoOneHackMeAnyMore", "Role": "User" }
+        /// 
+        /// </remarks>
+        /// <param name="request">Данные запроса по пользователю, который подлежит регистрации</param>
+        /// <returns>Зарегистрирован пользователь или нет</returns>
+        /// <response code="200">Все хорошо</response>
+        /// <response code="400">Передали неправильные параметры</response>
         [AllowAnonymous]
         [HttpPost("registration")]
         public async Task<IActionResult> RegisterUser([FromBody] CreateUserRequest request)
