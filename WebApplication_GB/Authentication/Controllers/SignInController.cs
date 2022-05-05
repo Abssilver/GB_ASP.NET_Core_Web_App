@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Authentication.BusinessLayer.Abstractions.Services;
 using Authentication.Requests;
+using Authentication.Validation;
 using BusinessLogic.Abstractions.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,13 +15,16 @@ namespace Authentication.Controllers
     {
         private readonly IUserService _userService;
         private readonly ILogger<SignInController> _logger;
+        private readonly ICreateUserRequestValidationService _validationService;
 
         public SignInController(
             IUserService userService,
-            ILogger<SignInController> logger)
+            ILogger<SignInController> logger,
+            ICreateUserRequestValidationService validationService)
         {
             _userService = userService;
             _logger = logger;
+            _validationService = validationService;
             
             _logger.LogDebug(1, $"Logger встроен в {this.GetType()}");
         }
@@ -44,6 +48,12 @@ namespace Authentication.Controllers
         [HttpPost("registration")]
         public async Task<IActionResult> RegisterUser([FromBody] CreateUserRequest request)
         {
+            var failures = _validationService.ValidateEntity(request);
+            if (failures.Count > 0)
+            {
+                return BadRequest(failures);
+            }
+
             var response = await _userService.RegisterUser(new SignInDto
             {
                 Username = request.Username,
