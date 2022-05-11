@@ -172,7 +172,7 @@ namespace Timesheets.Controllers
         {
             _logger.LogInformation(
                 $"Delete contract. Contract id:{request.ContractId}");
-            await _service.DeleteAsync(request.ContractId);
+            await _service.DeleteAsync(request.ContractId.Value);
             return Ok();
         }
     }

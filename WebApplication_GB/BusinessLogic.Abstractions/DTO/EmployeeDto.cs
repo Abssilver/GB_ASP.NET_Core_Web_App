@@ -4,7 +4,7 @@ namespace DataLayer
 {
     public class EmployeeDto : BaseDtoEntity
     {
-        public decimal Salary { get; set; }
-        public long Time { get; set; }
+        public decimal? Salary { get; set; }
+        public long? Time { get; set; }
     }
 }

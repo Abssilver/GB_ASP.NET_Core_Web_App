@@ -2,6 +2,6 @@
 {
     public class DeleteContractRequest
     {
-        public int ContractId { get; set; }
+        public int? ContractId { get; set; }
     }
 }

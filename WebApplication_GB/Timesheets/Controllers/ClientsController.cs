@@ -94,7 +94,7 @@ namespace Timesheets.Controllers
         public async Task<GetClientByIdResponse> GetClientById([FromBody] GetClientByIdRequest request)
         {
             _logger.LogInformation($"Getting client by id: {request.ClientId}");
-            var response = await _service.GetEntityByIdAsync(request.ClientId);
+            var response = await _service.GetEntityByIdAsync(request.ClientId.Value);
             return await Task.FromResult(new GetClientByIdResponse { Client = response });
         }
 
@@ -121,7 +121,7 @@ namespace Timesheets.Controllers
             _logger.LogInformation(
                 $"Getting clients with pagination. Page: {request.PageNumber}, Elements : {request.ElementsPerPage}");
             var response = 
-                await _service.GetEntitiesAsync(request.PageNumber, request.ElementsPerPage);
+                await _service.GetEntitiesAsync(request.PageNumber.Value, request.ElementsPerPage.Value);
             return await Task.FromResult(new GetClientWithPaginationResponse { Clients = response });
         }
         
@@ -172,7 +172,7 @@ namespace Timesheets.Controllers
         {
             _logger.LogInformation(
                 $"Delete client. Client id:{request.ClientId}");
-            await _service.DeleteAsync(request.ClientId);
+            await _service.DeleteAsync(request.ClientId.Value);
             return Ok();
         }
     }

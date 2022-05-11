@@ -172,7 +172,7 @@ namespace Timesheets.Controllers
         {
             _logger.LogInformation(
                 $"Delete Employee. Employee id:{request.EmployeeId}");
-            await _service.DeleteAsync(request.EmployeeId);
+            await _service.DeleteAsync(request.EmployeeId.Value);
             return Ok();
         }
     }

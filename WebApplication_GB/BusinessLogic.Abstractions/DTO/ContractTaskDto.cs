@@ -5,6 +5,6 @@ namespace DataLayer
 {
     public class ContractTaskDto : BaseDtoEntity
     {
-        public long Time { get; set; }
+        public long? Time { get; set; }
     }
 }

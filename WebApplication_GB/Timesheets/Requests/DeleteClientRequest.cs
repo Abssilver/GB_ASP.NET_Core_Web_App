@@ -2,6 +2,6 @@
 {
     public class DeleteClientRequest
     {
-        public int ClientId { get; set; }
+        public int? ClientId { get; set; }
     }
 }
