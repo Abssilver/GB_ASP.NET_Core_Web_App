@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Timesheets.Requests;
+using Timesheets.Requests.Extensions;
+using Timesheets.Validation;
 
 namespace Timesheets.Controllers
 {
@@ -14,14 +16,32 @@ namespace Timesheets.Controllers
     {
         private readonly ILogger<ClientsController> _logger;
         private readonly IClientService _service;
-
+        private readonly IRegisterClientRequestValidationService _registerValidationService;
+        private readonly IGetClientByNameRequestValidationService _getByNameValidationService;
+        private readonly IGetClientByIdRequestValidationService _getByIdValidationService;
+        private readonly IGetClientsWithPaginationRequestValidationService _getWithPaginationValidationService;
+        private readonly IUpdateClientRequestValidationService _updateValidationService;
+        private readonly IDeleteClientRequestValidationService _deleteValidationService;
         public ClientsController(
             ILogger<ClientsController> logger,
-            IClientService service)
+            IClientService service,
+            IRegisterClientRequestValidationService registerValidationService,
+            IGetClientByNameRequestValidationService getByNameValidationService, 
+            IGetClientByIdRequestValidationService getByIdValidationService, 
+            IGetClientsWithPaginationRequestValidationService getWithPaginationValidationService,
+            IUpdateClientRequestValidationService updateValidationService,
+            IDeleteClientRequestValidationService deleteValidationService)
         {
             _logger = logger;
             _logger.LogDebug(1, $"Logger встроен в {this.GetType()}");
             _service = service;
+            
+            _registerValidationService = registerValidationService;
+            _getByNameValidationService = getByNameValidationService;
+            _getByIdValidationService = getByIdValidationService;
+            _getWithPaginationValidationService = getWithPaginationValidationService;
+            _updateValidationService = updateValidationService;
+            _deleteValidationService = deleteValidationService;
         }
         
         /// <summary>
@@ -43,9 +63,15 @@ namespace Timesheets.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> RegisterClient([FromBody] RegisterClientRequest request)
         {
+            var failures = _registerValidationService.ValidateEntity(request);
+            if (failures.Count > 0)
+            {
+                return BadRequest(failures);
+            }
+            
             _logger.LogInformation(
                 $"Register client. Client id:{request.Client.Id}");
-
+            
             await _service.CreateAsync(request.Client);
             return Ok();
         }
@@ -69,9 +95,15 @@ namespace Timesheets.Controllers
         [HttpGet("get_by_name")]
         public async Task<GetClientByNameResponse> GetClientByName([FromBody] GetClientByNameRequest request)
         {
+            var failures = _getByNameValidationService.ValidateEntity(request);
+            if (failures.Count > 0)
+            {
+                return new GetClientByNameResponse { Client = null }.Failure(failures);
+            }
+            
             _logger.LogInformation($"Getting client by name: {request.ClientName}");
             var response = await _service.GetEntityByNameAsync(request.ClientName);
-            return await Task.FromResult(new GetClientByNameResponse { Client = response });
+            return new GetClientByNameResponse { Client = response }.Success();
         }
 
         /// <summary>
@@ -93,9 +125,15 @@ namespace Timesheets.Controllers
         [HttpGet("get_by_id")]
         public async Task<GetClientByIdResponse> GetClientById([FromBody] GetClientByIdRequest request)
         {
-            _logger.LogInformation($"Getting client by id: {request.ClientId}");
+            var failures = _getByIdValidationService.ValidateEntity(request);
+            if (failures.Count > 0)
+            {
+                return new GetClientByIdResponse { Client = null }.Failure(failures);
+            }
+            
+            _logger.LogInformation($"Getting client by id: {request.ClientId.Value}");
             var response = await _service.GetEntityByIdAsync(request.ClientId.Value);
-            return await Task.FromResult(new GetClientByIdResponse { Client = response });
+            return new GetClientByIdResponse { Client = response }.Success();
         }
 
         /// <summary>
@@ -118,11 +156,16 @@ namespace Timesheets.Controllers
         public async Task<GetClientWithPaginationResponse> GetClientsWithPagination(
             [FromBody] GetClientsWithPaginationRequest request)
         {
+            var failures = _getWithPaginationValidationService.ValidateEntity(request);
+            if (failures.Count > 0)
+            {
+                return new GetClientWithPaginationResponse { Clients = null }.Failure(failures);
+            }
             _logger.LogInformation(
-                $"Getting clients with pagination. Page: {request.PageNumber}, Elements : {request.ElementsPerPage}");
+                $"Getting clients with pagination. Page: {request.PageNumber.Value}, Elements : {request.ElementsPerPage.Value}");
             var response = 
                 await _service.GetEntitiesAsync(request.PageNumber.Value, request.ElementsPerPage.Value);
-            return await Task.FromResult(new GetClientWithPaginationResponse { Clients = response });
+            return new GetClientWithPaginationResponse { Clients = response }.Success();
         }
         
         
@@ -145,6 +188,12 @@ namespace Timesheets.Controllers
         [HttpPut("update")]
         public async Task<IActionResult> UpdateClientById([FromBody] UpdateClientRequest request)
         {
+            var failures = _updateValidationService.ValidateEntity(request);
+            if (failures.Count > 0)
+            {
+                return BadRequest(failures);
+            }
+            
             _logger.LogInformation(
                 $"Updating client with id: {request.Client.Id}");
             await _service.UpdateAsync(request.Client);
@@ -170,8 +219,14 @@ namespace Timesheets.Controllers
         [HttpDelete("delete")]
         public async Task<IActionResult> DeleteClient([FromBody] DeleteClientRequest request)
         {
+            var failures = _deleteValidationService.ValidateEntity(request);
+            if (failures.Count > 0)
+            {
+                return BadRequest(failures);
+            }
+            
             _logger.LogInformation(
-                $"Delete client. Client id:{request.ClientId}");
+                $"Delete client. Client id:{request.ClientId.Value}");
             await _service.DeleteAsync(request.ClientId.Value);
             return Ok();
         }

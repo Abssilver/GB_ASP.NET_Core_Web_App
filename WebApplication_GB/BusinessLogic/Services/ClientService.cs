@@ -50,14 +50,14 @@ namespace BusinessLogic.Services
         {
             return _repository.CreateAsync(new Client
             {
-                Id = item.Id,
+                Id = item.Id.Value,
                 Name = item.Name,
             });
         }
 
         public async Task UpdateAsync(ClientDto item)
         {
-            var entity = await _repository.GetByIdAsync(item.Id);
+            var entity = await _repository.GetByIdAsync(item.Id.Value);
             entity.Name = item.Name;
             await _repository.UpdateAsync(entity);
         }

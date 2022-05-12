@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Timesheets.Requests;
+using Timesheets.Requests.Extensions;
+using Timesheets.Validation;
 
 namespace Timesheets.Controllers
 {
@@ -14,16 +16,35 @@ namespace Timesheets.Controllers
     {
         private readonly ILogger<EmployeesController> _logger;
         private readonly IEmployeeService _service;
+        private readonly IRegisterEmployeeRequestValidationService _registerValidationService;
+        private readonly IGetEmployeeByNameRequestValidationService _getByNameValidationService;
+        private readonly IGetEmployeeByIdRequestValidationService _getByIdValidationService;
+        private readonly IGetEmployeesWithPaginationRequestValidationService _getWithPaginationValidationService;
+        private readonly IUpdateEmployeeRequestValidationService _updateValidationService;
+        private readonly IDeleteEmployeeRequestValidationService _deleteValidationService;
 
         public EmployeesController(
             ILogger<EmployeesController> logger,
-            IEmployeeService service)
+            IEmployeeService service,
+            IRegisterEmployeeRequestValidationService registerValidationService,
+            IGetEmployeeByNameRequestValidationService getByNameValidationService,
+            IGetEmployeeByIdRequestValidationService getByIdValidationService,
+            IGetEmployeesWithPaginationRequestValidationService getWithPaginationValidationService,
+            IUpdateEmployeeRequestValidationService updateValidationService,
+            IDeleteEmployeeRequestValidationService deleteValidationService)
         {
             _logger = logger;
             _logger.LogDebug(1, $"Logger встроен в {this.GetType()}");
             _service = service;
+
+            _registerValidationService = registerValidationService;
+            _getByNameValidationService = getByNameValidationService;
+            _getByIdValidationService = getByIdValidationService;
+            _getWithPaginationValidationService = getWithPaginationValidationService;
+            _updateValidationService = updateValidationService;
+            _deleteValidationService = deleteValidationService;
         }
-        
+
         /// <summary>
         /// Производит регистрацию работника (Создание записи в БД)
         /// </summary>
@@ -43,6 +64,12 @@ namespace Timesheets.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> RegisterEmployee([FromBody] RegisterEmployeeRequest request)
         {
+            var failures = _registerValidationService.ValidateEntity(request);
+            if (failures.Count > 0)
+            {
+                return BadRequest(failures);
+            }
+            
             _logger.LogInformation(
                 $"Register employee. Employee id:{request.Employee.Id}");
 
@@ -69,9 +96,15 @@ namespace Timesheets.Controllers
         [HttpGet("get_by_name")]
         public async Task<GetEmployeeByNameResponse> GetEmployeeByName([FromBody] GetEmployeeByNameRequest request)
         {
+            var failures = _getByNameValidationService.ValidateEntity(request);
+            if (failures.Count > 0)
+            {
+                return new GetEmployeeByNameResponse { Employee = null }.Failure(failures);
+            }
+            
             _logger.LogInformation($"Getting employee by name: {request.EmployeeName}");
             var response = await _service.GetEntityByNameAsync(request.EmployeeName);
-            return await Task.FromResult(new GetEmployeeByNameResponse { Employee = response });
+            return new GetEmployeeByNameResponse { Employee = response }.Success();
         }
 
         /// <summary>
@@ -93,9 +126,15 @@ namespace Timesheets.Controllers
         [HttpGet("get_by_id")]
         public async Task<GetEmployeeByIdResponse> GetEmployeeById([FromBody] GetEmployeeByIdRequest request)
         {
-            _logger.LogInformation($"Getting Employee by id: {request.EmployeeId}");
-            var response = await _service.GetEntityByIdAsync(request.EmployeeId);
-            return await Task.FromResult(new GetEmployeeByIdResponse { Employee = response });
+            var failures = _getByIdValidationService.ValidateEntity(request);
+            if (failures.Count > 0)
+            {
+                return new GetEmployeeByIdResponse { Employee = null }.Failure(failures);
+            }
+            
+            _logger.LogInformation($"Getting Employee by id: {request.EmployeeId.Value}");
+            var response = await _service.GetEntityByIdAsync(request.EmployeeId.Value);
+            return new GetEmployeeByIdResponse { Employee = response }.Success();
         }
 
         /// <summary>
@@ -118,11 +157,17 @@ namespace Timesheets.Controllers
         public async Task<GetEmployeeWithPaginationResponse> GetEmployeesWithPagination(
             [FromBody] GetEmployeesWithPaginationRequest request)
         {
+            var failures = _getWithPaginationValidationService.ValidateEntity(request);
+            if (failures.Count > 0)
+            {
+                return new GetEmployeeWithPaginationResponse { Employees = null }.Failure(failures);
+            }
+            
             _logger.LogInformation(
-                $"Getting Employee with pagination. Page: {request.PageNumber}, Elements : {request.ElementsPerPage}");
+                $"Getting Employee with pagination. Page: {request.PageNumber.Value}, Elements : {request.ElementsPerPage.Value}");
             var response = 
-                await _service.GetEntitiesAsync(request.PageNumber, request.ElementsPerPage);
-            return await Task.FromResult(new GetEmployeeWithPaginationResponse { Employees = response });
+                await _service.GetEntitiesAsync(request.PageNumber.Value, request.ElementsPerPage.Value);
+            return new GetEmployeeWithPaginationResponse { Employees = response }.Success();
         }
         
         
@@ -145,6 +190,12 @@ namespace Timesheets.Controllers
         [HttpPut("update")]
         public async Task<IActionResult> UpdateEmployeeById([FromBody] UpdateEmployeeRequest request)
         {
+            var failures = _updateValidationService.ValidateEntity(request);
+            if (failures.Count > 0)
+            {
+                return BadRequest(failures);
+            }
+            
             _logger.LogInformation(
                 $"Updating Employee with id: {request.Employee.Id}");
             await _service.UpdateAsync(request.Employee);
@@ -170,8 +221,14 @@ namespace Timesheets.Controllers
         [HttpDelete("delete")]
         public async Task<IActionResult> DeleteEmployee([FromBody] DeleteEmployeeRequest request)
         {
+            var failures = _deleteValidationService.ValidateEntity(request);
+            if (failures.Count > 0)
+            {
+                return BadRequest(failures);
+            }
+            
             _logger.LogInformation(
-                $"Delete Employee. Employee id:{request.EmployeeId}");
+                $"Delete Employee. Employee id:{request.EmployeeId.Value}");
             await _service.DeleteAsync(request.EmployeeId.Value);
             return Ok();
         }

@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Timesheets.Requests;
+using Timesheets.Requests.Extensions;
+using Timesheets.Validation;
 
 namespace Timesheets.Controllers
 {
@@ -14,16 +16,35 @@ namespace Timesheets.Controllers
     {
         private readonly ILogger<ContractsController> _logger;
         private readonly IContractService _service;
+        private readonly IRegisterContractRequestValidationService _registerValidationService;
+        private readonly IGetContractByNameRequestValidationService _getByNameValidationService;
+        private readonly IGetContractByIdRequestValidationService _getByIdValidationService;
+        private readonly IGetContractsWithPaginationRequestValidationService _getWithPaginationValidationService;
+        private readonly IUpdateContractRequestValidationService _updateValidationService;
+        private readonly IDeleteContractRequestValidationService _deleteValidationService;
 
         public ContractsController(
             ILogger<ContractsController> logger,
-            IContractService service)
+            IContractService service,
+            IRegisterContractRequestValidationService registerValidationService,
+            IGetContractByNameRequestValidationService getByNameValidationService,
+            IGetContractByIdRequestValidationService getByIdValidationService,
+            IGetContractsWithPaginationRequestValidationService getWithPaginationValidationService,
+            IUpdateContractRequestValidationService updateValidationService,
+            IDeleteContractRequestValidationService deleteValidationService)
         {
             _logger = logger;
             _logger.LogDebug(1, $"Logger встроен в {this.GetType()}");
             _service = service;
+
+            _registerValidationService = registerValidationService;
+            _getByNameValidationService = getByNameValidationService;
+            _getByIdValidationService = getByIdValidationService;
+            _getWithPaginationValidationService = getWithPaginationValidationService;
+            _updateValidationService = updateValidationService;
+            _deleteValidationService = deleteValidationService;
         }
-        
+
         /// <summary>
         /// Производит регистрацию контракта (Создание записи в БД)
         /// </summary>
@@ -43,6 +64,12 @@ namespace Timesheets.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> RegisterContract([FromBody] RegisterContractRequest request)
         {
+            var failures = _registerValidationService.ValidateEntity(request);
+            if (failures.Count > 0)
+            {
+                return BadRequest(failures);
+            }
+            
             _logger.LogInformation(
                 $"Register contract. Contract id:{request.Contract.Id}");
 
@@ -69,9 +96,15 @@ namespace Timesheets.Controllers
         [HttpGet("get_by_name")]
         public async Task<GetContractByNameResponse> GetContractByName([FromBody] GetContractByNameRequest request)
         {
+            var failures = _getByNameValidationService.ValidateEntity(request);
+            if (failures.Count > 0)
+            {
+                return new GetContractByNameResponse { Contract = null }.Failure(failures);
+            }
+
             _logger.LogInformation($"Getting contract by name: {request.ContractName}");
             var response = await _service.GetEntityByNameAsync(request.ContractName);
-            return await Task.FromResult(new GetContractByNameResponse { Contract = response });
+            return new GetContractByNameResponse { Contract = response }.Success();
         }
 
         /// <summary>
@@ -93,9 +126,15 @@ namespace Timesheets.Controllers
         [HttpGet("get_by_id")]
         public async Task<GetContractByIdResponse> GetContractById([FromBody] GetContractByIdRequest request)
         {
-            _logger.LogInformation($"Getting contract by id: {request.ContractId}");
-            var response = await _service.GetEntityByIdAsync(request.ContractId);
-            return await Task.FromResult(new GetContractByIdResponse { Contract = response });
+            var failures = _getByIdValidationService.ValidateEntity(request);
+            if (failures.Count > 0)
+            {
+                return new GetContractByIdResponse { Contract = null }.Failure(failures);
+            }
+            
+            _logger.LogInformation($"Getting contract by id: {request.ContractId.Value}");
+            var response = await _service.GetEntityByIdAsync(request.ContractId.Value);
+            return new GetContractByIdResponse { Contract = response }.Success();
         }
 
         /// <summary>
@@ -118,11 +157,17 @@ namespace Timesheets.Controllers
         public async Task<GetContractWithPaginationResponse> GetContractsWithPagination(
             [FromBody] GetContractsWithPaginationRequest request)
         {
+            var failures = _getWithPaginationValidationService.ValidateEntity(request);
+            if (failures.Count > 0)
+            {
+                return new GetContractWithPaginationResponse { Contracts = null }.Failure(failures);
+            }
+            
             _logger.LogInformation(
-                $"Getting contract with pagination. Page: {request.PageNumber}, Elements : {request.ElementsPerPage}");
+                $"Getting contract with pagination. Page: {request.PageNumber.Value}, Elements : {request.ElementsPerPage.Value}");
             var response = 
-                await _service.GetEntitiesAsync(request.PageNumber, request.ElementsPerPage);
-            return await Task.FromResult(new GetContractWithPaginationResponse { Contracts = response });
+                await _service.GetEntitiesAsync(request.PageNumber.Value, request.ElementsPerPage.Value);
+            return new GetContractWithPaginationResponse { Contracts = response }.Success();
         }
         
         
@@ -145,6 +190,12 @@ namespace Timesheets.Controllers
         [HttpPut("update")]
         public async Task<IActionResult> UpdateContractById([FromBody] UpdateContractRequest request)
         {
+            var failures = _updateValidationService.ValidateEntity(request);
+            if (failures.Count > 0)
+            {
+                return BadRequest(failures);
+            }
+            
             _logger.LogInformation(
                 $"Updating contract with id: {request.Contract.Id}");
             await _service.UpdateAsync(request.Contract);
@@ -170,8 +221,14 @@ namespace Timesheets.Controllers
         [HttpDelete("delete")]
         public async Task<IActionResult> DeleteContract([FromBody] DeleteContractRequest request)
         {
+            var failures = _deleteValidationService.ValidateEntity(request);
+            if (failures.Count > 0)
+            {
+                return BadRequest(failures);
+            }
+            
             _logger.LogInformation(
-                $"Delete contract. Contract id:{request.ContractId}");
+                $"Delete contract. Contract id:{request.ContractId.Value}");
             await _service.DeleteAsync(request.ContractId.Value);
             return Ok();
         }

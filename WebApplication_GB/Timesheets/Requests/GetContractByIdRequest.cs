@@ -2,6 +2,6 @@
 {
     public class GetContractByIdRequest
     {
-        public int ContractId { get; set; }
+        public int? ContractId { get; set; }
     }
 }

@@ -83,34 +83,34 @@ namespace BusinessLogic.Services
         {
             return _repository.CreateAsync(new Contract
             {
-                Id = item.Id,
+                Id = item.Id.Value,
                 Name = item.Name,
                 Description = item.Description,
                 Tasks = item.Tasks.Select(task => new ContractTask()
                 {
-                    Id = task.Id,
+                    Id = task.Id.Value,
                     Name = task.Name,
-                    Time = task.Time,
+                    Time = task.Time.Value,
                 }).ToList(),
                 Owner = new Client
                 {
-                    Id = item.Owner.Id,
+                    Id = item.Owner.Id.Value,
                 }
             });
         }
 
         public async Task UpdateAsync(ContractDto item)
         {
-            var entity = await _repository.GetByIdAsync(item.Id);
+            var entity = await _repository.GetByIdAsync(item.Id.Value);
             entity.Name = item.Name;
             entity.Description = item.Description;
             entity.Tasks = item.Tasks.Select(task => new ContractTask
             {
-                Id = task.Id,
+                Id = task.Id.Value,
                 Name = task.Name,
-                Time = task.Time,
+                Time = task.Time.Value,
             }).ToList();
-            entity.Owner = new Client { Id = item.Owner.Id, };
+            entity.Owner = new Client { Id = item.Owner.Id.Value, };
             await _repository.UpdateAsync(entity);
         }
 

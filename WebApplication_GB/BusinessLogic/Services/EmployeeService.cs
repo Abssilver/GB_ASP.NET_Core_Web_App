@@ -56,19 +56,19 @@ namespace BusinessLogic.Services
         {
             return _repository.CreateAsync(new Employee
             {
-                Id = item.Id,
+                Id = item.Id.Value,
                 Name = item.Name,
-                Salary = item.Salary,
-                Time = item.Time,
+                Salary = item.Salary.Value,
+                Time = item.Time.Value,
             });
         }
 
         public async Task UpdateAsync(EmployeeDto item)
         {
-            var entity = await _repository.GetByIdAsync(item.Id);
+            var entity = await _repository.GetByIdAsync(item.Id.Value);
             entity.Name = item.Name;
-            entity.Salary = item.Salary;
-            entity.Time = item.Time;
+            entity.Salary = item.Salary.Value;
+            entity.Time = item.Time.Value;
             await _repository.UpdateAsync(entity);
         }
 
