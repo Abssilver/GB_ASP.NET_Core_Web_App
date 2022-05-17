@@ -32,6 +32,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnailTask", "SnailTask\Snai
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Validation.Abstractions", "Validation.Abstractions\Validation.Abstractions.csproj", "{BDFCB311-419E-42B2-8E77-6DE5FD76096E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrossTask", "CrossTask\CrossTask.csproj", "{5BC3C829-5BB6-4EAD-9DB3-1F0A423AABB8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -102,5 +104,9 @@ Global
 		{BDFCB311-419E-42B2-8E77-6DE5FD76096E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BDFCB311-419E-42B2-8E77-6DE5FD76096E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BDFCB311-419E-42B2-8E77-6DE5FD76096E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5BC3C829-5BB6-4EAD-9DB3-1F0A423AABB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BC3C829-5BB6-4EAD-9DB3-1F0A423AABB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BC3C829-5BB6-4EAD-9DB3-1F0A423AABB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BC3C829-5BB6-4EAD-9DB3-1F0A423AABB8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
