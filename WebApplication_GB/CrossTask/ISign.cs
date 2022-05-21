@@ -14,7 +14,7 @@
 
     internal interface ITurnMaker
     {
-        Position ImplementTurn();
+        Position MakeTurn();
     }
 
     internal sealed class NoneSign : ISign
@@ -33,5 +33,15 @@
     {
         public int Value { get; } = 2;
         public char Visual { get; } = 'X'; 
+    }
+    internal sealed class ASign : ISign
+    {
+        public int Value { get; } = 3;
+        public char Visual { get; } = 'A'; 
+    }
+    internal sealed class ESign : ISign
+    {
+        public int Value { get; } = 4;
+        public char Visual { get; } = 'E'; 
     }
 }

@@ -35,7 +35,8 @@ namespace CrossTask
             var turnMaker = _players[playerIndex];
             _drawService.DrawNextTurn(_board.GameBoard, turnMaker.Name, _turnCounter);
             
-            var position = turnMaker.ImplementTurn();
+            var position = turnMaker.MakeTurn();
+            _board.ImplementTurn(position, turnMaker.Sign.Value);
             
             _isGameWon = _winChecker.IsWin(turnMaker.Sign.Value);
             

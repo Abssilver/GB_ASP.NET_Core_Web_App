@@ -35,5 +35,17 @@ namespace CrossTask
             _board[pos.Row, pos.Column] = side;
             OnTurnMade?.Invoke(pos, side);
         }
+
+        public bool IsEmpty(Position pos)
+        {
+            return GameBoard[pos.Row, pos.Column] == _noneSign.Value;
+        }
+        
+        public bool IsInBoard(Position pos)
+        {
+            var isRowValid = pos.Row > 0 && pos.Row < GameBoard.GetLength(0);
+            var isColumnValid = pos.Column > 0 && pos.Column < GameBoard.GetLength(1);
+            return isRowValid && isColumnValid;
+        }
     }
 }

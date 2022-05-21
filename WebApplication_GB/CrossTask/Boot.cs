@@ -7,17 +7,22 @@ namespace CrossTask
     {
         static void Main(string[] args)
         {           
-            var size = 8;
-            var winSteak = 4;
+            var size = 10;
+            var winSteak = 5;
 
             var noneSign = new NoneSign();
             var board = new Board(size, size, noneSign);
             var logger = new ConsoleLogger();
             var inputValidator = new GameValidator(board, noneSign);
+            var botFactory = new BotFactory(board, logger, winSteak);
             var players = new List<IPlayer>
             {
+                //TODO: Disable player, if you want to see how ai playes
                 new HumanPlayer(new Cross(), "Mr Cross", inputValidator, logger),
-                new DummyAiPlayer(new Circle(), noneSign, board,"Mr Fluffy", logger),
+                botFactory.CreateDummyAi(new Circle(), "Mr Bun"),
+                botFactory.CreateDefenderAi(new ASign(), "Shield Ace"),
+                botFactory.CreateDefenderAi(new ESign(), "Attentive Kitty"),
+                //botFactory.CreateDummyAi(new Cross(), "Mr Fluffy"),
             };
             
             var drawService = new ConsoleDrawer(noneSign, players.Select(x => x.Sign));

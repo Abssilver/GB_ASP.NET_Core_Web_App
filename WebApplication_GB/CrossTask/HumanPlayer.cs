@@ -21,7 +21,7 @@ namespace CrossTask
             _logger = logger;
         }
 
-        public Position ImplementTurn()
+        public Position MakeTurn()
         {
             Console.WriteLine("Enter the coordinates: X Y (example: 1 3)");
             Console.WriteLine("Use Space Key as separator");

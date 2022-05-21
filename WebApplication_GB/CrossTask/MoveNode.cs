@@ -21,6 +21,9 @@ namespace CrossTask
     {
         public Core(MoveNode current, IList<MoveNode> moves)
         {
+            if (moves is null || moves.Count == 0)
+                return;
+
             var pos = current.Position;
             TopLeft = moves.FirstOrDefault(x => 
                 pos.Row - 1 == x.Position.Row && pos.Column - 1 == x.Position.Column);

@@ -17,7 +17,7 @@
 
         }
 
-        public Position ImplementTurn()
+        public Position MakeTurn()
         {
             return _behaviour.GetPosition();
         }
