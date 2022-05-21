@@ -17,7 +17,7 @@ namespace CrossTask
             var botFactory = new BotFactory(board, logger, winSteak);
             var players = new List<IPlayer>
             {
-                //TODO: Disable player, if you want to see how ai playes
+                //TODO: Disable player, if you want to see how ai plays
                 new HumanPlayer(new Cross(), "Mr Cross", inputValidator, logger),
                 botFactory.CreateDummyAi(new Circle(), "Mr Bun"),
                 botFactory.CreateDefenderAi(new ASign(), "Shield Ace"),
